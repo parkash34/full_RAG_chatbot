@@ -28,17 +28,24 @@ class ChatMessage(BaseModel):
     session_id: str
     message: str
 
-    @field_validator
+    @field_validator("session_id")
     @classmethod
     def session_id_is_empty(cls, v):
         if not v.strip():
             raise ValueError("Session ID is empty")
         return v
     
+    @field_validator("message")
+    @classmethod
+    def message_is_empty(cls, v):
+        if not v.strip():
+            raise ValueError("Message is Empty")
+        return v
+    
 class QueryOnly(BaseModel):
     session_id: str
     
-    @field_validator
+    @field_validator("session_id")
     @classmethod
     def session_id_is_empty(cls, v):
         if not v.strip():
@@ -52,9 +59,9 @@ embeddings = HuggingFaceEmbeddings(
 
 pc = Pinecone(api_key=pinecone_api_key)
 
-if "bella-italia-docs" not in pc.list_indexes().names():
+if "bella-italia-rag" not in pc.list_indexes().names():
     pc.create_index(
-        name="bella-italia-docs",
+        name="bella-italia-rag",
         dimension=384,
         metric="cosine",
         spec=ServerlessSpec(
@@ -88,12 +95,12 @@ def build_pipeline():
     return all_chunks
 
 vector_store = PineconeVectorStore(
-    index_name="bella-italia-docs",
+    index_name="bella-italia-rag",
     embedding=embeddings,
     pinecone_api_key=pinecone_api_key
 )
 
-index = pc.Index("bella-italia-docs")
+index = pc.Index("bella-italia-rag")
 stats = index.describe_index_stats()
 
 if stats.total_vector_count == 0:
@@ -103,9 +110,15 @@ if stats.total_vector_count == 0:
 else:
     print("Documents already loaded - skipping")
 
-    llm = ChatGroq(
+llm = ChatGroq(
     model="llama-3.3-70b-versatile",
     temperature=0.2,
     max_tokens=500,
     api_key=api_key
-)
+    )
+
+def get_session(session_id: str) -> list:
+    if session_id not in sessions:
+        sessions[session_id] = []
+
+    return sessions[session_id]
