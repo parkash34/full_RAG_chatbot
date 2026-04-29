@@ -24,4 +24,23 @@ if not pinecone_api_key:
 app = FastAPI()
 sessions = {}
 
+class ChatMessage(BaseModel):
+    session_id: str
+    message: str
 
+    @field_validator
+    @classmethod
+    def session_id_not_empty(cls, v):
+        if not v.strip():
+            raise ValueError("Session ID is empty")
+        return v
+    
+class QueryOnly(BaseModel):
+    session_id: str
+    
+    @field_validator
+    @classmethod
+    def session_id_not_empty(cls, v):
+        if not v.strip():
+            raise ValueError("Session ID is empty")
+        return v
