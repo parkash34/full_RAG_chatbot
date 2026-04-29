@@ -86,3 +86,26 @@ def build_pipeline():
     print(f"Total chunks: {len(all_chunks)}")
 
     return all_chunks
+
+vector_store = PineconeVectorStore(
+    index_name="bella-italia-docs",
+    embedding=embeddings,
+    pinecone_api_key=pinecone_api_key
+)
+
+index = pc.Index("bella-italia-docs")
+stats = index.describe_index_stats()
+
+if stats.total_vector_count == 0:
+    chunks = build_pipeline()
+    vector_store.add_documents(chunks)
+    print("Documents loaded successfully")
+else:
+    print("Documents already loaded - skipping")
+
+    llm = ChatGroq(
+    model="llama-3.3-70b-versatile",
+    temperature=0.2,
+    max_tokens=500,
+    api_key=api_key
+)
