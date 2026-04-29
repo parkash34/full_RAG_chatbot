@@ -44,3 +44,8 @@ class QueryOnly(BaseModel):
         if not v.strip():
             raise ValueError("Session ID is empty")
         return v
+    
+
+embeddings = HuggingFaceEmbeddings(
+    model_name="sentence-transformers/all-MiniLM-L6-v2"
+)
