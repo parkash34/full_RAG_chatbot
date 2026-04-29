@@ -30,7 +30,7 @@ class ChatMessage(BaseModel):
 
     @field_validator
     @classmethod
-    def session_id_not_empty(cls, v):
+    def session_id_is_empty(cls, v):
         if not v.strip():
             raise ValueError("Session ID is empty")
         return v
@@ -40,7 +40,7 @@ class QueryOnly(BaseModel):
     
     @field_validator
     @classmethod
-    def session_id_not_empty(cls, v):
+    def session_id_is_empty(cls, v):
         if not v.strip():
             raise ValueError("Session ID is empty")
         return v
