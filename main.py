@@ -11,3 +11,17 @@ from pinecone import Pinecone, ServerlessSpec
 from langchain_core.messages import HumanMessage
 from langchain_groq import ChatGroq
 
+
+load_dotenv()
+api_key = os.getenv("API_KEY")
+if not api_key:
+    raise ValueError("API KEY is missing in env file")
+
+pinecone_api_key = os.getenv("PINECONE_API_KEY")
+if not pinecone_api_key:
+    raise ValueError("PINECONE API KEY is missing in env file")
+
+app = FastAPI()
+sessions = {}
+
+
