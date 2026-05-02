@@ -11,7 +11,6 @@ from pinecone import Pinecone, ServerlessSpec
 from langchain_core.messages import HumanMessage
 from langchain_groq import ChatGroq
 
-
 load_dotenv()
 api_key = os.getenv("API_KEY")
 if not api_key:
