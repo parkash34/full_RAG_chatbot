@@ -244,3 +244,13 @@ def get_history(query: QueryOnly):
         "history": history,
         "history_length": len(history)
     }
+
+@app.post("/clear")
+def clear_history(query: QueryOnly):
+    session_id = query.session_id
+    sessions[session_id] = []
+
+    return {
+        "message": f"History cleared for session {session_id}",
+        "session_id": session_id
+    }
