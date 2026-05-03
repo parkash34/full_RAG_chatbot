@@ -230,3 +230,7 @@ PINECONE_API_KEY=your_pinecone_api_key
 - Session history resets when server restarts
 - HuggingFace model downloads automatically on first run
 - Pinecone free tier — 1 index, 2GB storage, no credit card
+
+## 👤 Author
+
+**Ohm Parkash** — [LinkedIn](https://www.linkedin.com/in/om-parkash34/) · [GitHub](https://github.com/parkash34)
