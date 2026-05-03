@@ -121,3 +121,9 @@ def get_session(session_id: str) -> list:
         sessions[session_id] = []
 
     return sessions[session_id]
+
+def process_query(query: str, history: list) -> str:
+    if not history:
+        return query
+    if len(history) == 4:
+        
