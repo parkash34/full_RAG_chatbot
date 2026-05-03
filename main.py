@@ -201,3 +201,32 @@ def build_prompt(query: str, context: str, history: list) -> str:
 
     return prompt
 
+@app.post("/chat")
+def chat(message: ChatMessage):
+    try:
+        session_id = message.session_id
+        query = message.message
+
+        history = get_session(session_id)
+        processed_query = process_query(query, history)
+        context, sources = retrieve_context(processed_query)
+        prompt = build_prompt(query, context, history)
+
+        response = llm.invoke([HumanMessage(content=prompt)])
+        answer = response.content
+
+        history.append({"role": "user", "content": query})
+        history.append({"role": "assistant", "content": answer})
+
+        return {
+            "answer": answer,
+            "sources": sources,
+            "session_id": session_id,
+            "history_length": len(history)
+        }
+
+    except Exception as e:
+        return {
+            "answer": "Sorry I am having trouble right now. Please try again.",
+            "error": str(e)
+        }
