@@ -34,6 +34,7 @@ the restaurant — menu questions, FAQ questions and follow up questions
 | python-dotenv | Environment variable management |
 
 ## Project Structure
+```
 full-rag-chatbot/
 │
 ├── env/
@@ -42,34 +43,43 @@ full-rag-chatbot/
 ├── faq.txt
 ├── .env
 └── requirements.txt
-
+```
 ## Setup
 
 1. Clone the repository
+```
 git clone https://github.com/yourusername/bella-italia-rag-chatbot
-
+```
 2. Create and activate virtual environment
+```
 python -m venv env
 env\Scripts\activate
-
+```
 3. Install dependencies
+```
 pip install -r requirements.txt
-
+```
 4. Create `.env` file and add your API keys
+```
 API_KEY=your_groq_api_key
 PINECONE_API_KEY=your_pinecone_api_key
-
+```
 5. Add your documents to project folder
+```
 menu.pdf  →  restaurant menu PDF
 faq.txt   →  frequently asked questions
+```
 
 6. Run the server
+```
 uvicorn main:app --reload
+```
 
 ## API Endpoints
 
 ### POST /chat
 Main chatbot endpoint with conversation memory.
+
 
 **Request:**
 ```json
@@ -141,6 +151,7 @@ No request body needed.
 ```
 
 ## How It Works
+```
 menu.pdf + faq.txt
 ↓
 PyPDFLoader and TextLoader load documents
@@ -167,9 +178,9 @@ AI generates accurate answer from real documents
 Answer saved to session history
 ↓
 Response returned with sources and session info
-
+```
 ## Query Processing
-
+```
 Follow up questions are automatically resolved:
 User: "Do you have vegan food?"
 AI:   "Yes we have Vegan Arrabbiata"
@@ -179,24 +190,26 @@ Query processing resolves "it" to "Vegan Arrabbiata"
 Reformulated: "How much does Vegan Arrabbiata cost?"
 ↓
 AI: "It costs $12"  ← correct answer ✅
-
+```
 ## Conversation History Management
+```
 Sessions stored in memory per user
 Last 6 messages used for context injection
 Last 4 messages used for query processing
 History cleared when /clear endpoint called
 History resets when server restarts
+```
 
 ## Document Pipeline
+```
 One time setup:
 Load → Split → Embed → Store in Pinecone
 Subsequent restarts:
 Skip embedding — data already in Pinecone
 Update documents:
 Call /update → delete old index → rebuild pipeline
-
+```
 ## Retriever Configuration
-
 ```python
 search_type = "similarity_score_threshold"
 score_threshold = 0.5   # filters results below 50% similarity
@@ -204,8 +217,10 @@ k = 4                   # returns top 4 results
 ```
 
 ## Environment Variables
+```
 API_KEY=your_groq_api_key
 PINECONE_API_KEY=your_pinecone_api_key
+```
 
 ## Notes
 
