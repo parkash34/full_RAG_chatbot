@@ -143,3 +143,28 @@ def process_query(query: str, history: list) -> str:
     response = llm.invoke([HumanMessage(content=reformulation_prompt)])
     return response.content.strip()
 
+
+def retrieve_context(query: str) -> tuple:
+    retriever = vector_store.as_retriever(
+        search_type="similarity_score_threshold",
+        search_kwargs={
+            "score_threshold": 0.5,
+            "k": 4
+        }
+    )
+
+    docs = retriever.invoke(query)
+
+    if not docs:
+        return "", []
+
+    context = ""
+    sources = []
+    for doc in docs:
+        source = doc.metadata.get("source", "unknown")
+        context += f"[Source: {source}]\n{doc.page_content}\n\n"
+        if source not in sources:
+            sources.append(source)
+
+    return context, sources
+
