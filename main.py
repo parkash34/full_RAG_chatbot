@@ -254,3 +254,35 @@ def clear_history(query: QueryOnly):
         "message": f"History cleared for session {session_id}",
         "session_id": session_id
     }
+
+@app.post("/update")
+def update_documents():
+    try:
+        pc.delete_index("bella-italia-rag")
+        print("Old index deleted")
+
+        pc.create_index(
+            name="bella-italia-rag",
+            dimension=384,
+            metric="cosine",
+            spec=ServerlessSpec(
+                cloud="aws",
+                region="us-east-1"
+            )
+        )
+        print("New index created")
+
+        global vector_store
+        vector_store = PineconeVectorStore(
+            index_name="bella-italia-rag",
+            embedding=embeddings,
+            pinecone_api_key=pinecone_api_key
+        )
+
+        chunks = build_pipeline()
+        vector_store.add_documents(chunks)
+
+        return {"message": "Documents updated successfully!"}
+
+    except Exception as e:
+        return {"error": f"Update failed: {str(e)}"}
