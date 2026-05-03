@@ -168,3 +168,36 @@ def retrieve_context(query: str) -> tuple:
 
     return context, sources
 
+def build_prompt(query: str, context: str, history: list) -> str:
+    recent_history = history[-6:]
+    history_text = ""
+    for msg in recent_history:
+        role = msg["role"].upper()
+        history_text += f"{role}: {msg['content']}\n"
+
+    if not context:
+        prompt = f"""You are a restaurant assistant for Bella Italia.
+    You could not find relevant information for this question.
+    Politely tell the customer you don't have that information
+    and suggest they call: 123-456-7890
+
+    Question: {query}
+    Answer:"""
+    else:
+         prompt = f"""You are a helpful restaurant assistant for Bella Italia.
+    Answer using ONLY the context provided below.
+    Never make up information.
+    If the answer is not in the context say:
+    "I don't have that information. Please call us at 123-456-7890"
+
+    CONTEXT:
+    {context}
+
+    CONVERSATION HISTORY:
+    {history_text}
+
+    CURRENT QUESTION: {query}
+    ANSWER:"""
+
+    return prompt
+
