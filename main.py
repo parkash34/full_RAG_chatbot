@@ -230,3 +230,17 @@ def chat(message: ChatMessage):
             "answer": "Sorry I am having trouble right now. Please try again.",
             "error": str(e)
         }
+    
+@app.post("/history")
+def get_history(query: QueryOnly):
+    session_id = query.session_id
+    history = get_session(session_id)
+
+    if not history:
+        return {"session_id": session_id, "history": [], "message": "No history found"}
+
+    return {
+        "session_id": session_id,
+        "history": history,
+        "history_length": len(history)
+    }
