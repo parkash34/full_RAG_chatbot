@@ -125,5 +125,21 @@ def get_session(session_id: str) -> list:
 def process_query(query: str, history: list) -> str:
     if not history:
         return query
-    if len(history) == 4:
-        
+
+    recent_history = history[-4:]
+    history_text = ""
+    for msg in recent_history:
+        role = msg["role"].upper()
+        history_text += f"{role}: {msg['content']}\n"
+
+    reformulation_prompt = f"""Given this conversation:
+    {history_text}
+
+    Reformulate this follow up question as a complete standalone question.
+    If it is already standalone return it as is.
+    Question: {query}
+    Return only the reformulated question nothing else."""
+
+    response = llm.invoke([HumanMessage(content=reformulation_prompt)])
+    return response.content.strip()
+
